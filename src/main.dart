@@ -9,5 +9,5 @@ main() {
   else
     stdout.writeln('Enter num!');
   print("Hello, World");
-  print("Hey");
+  print("مش عارف اعمل رن");
 }
