@@ -1,0 +1,92 @@
+@startuml
+title ICPC Training Companion - Use Case Diagram
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam backgroundColor white
+skinparam usecase {
+  BackgroundColor #EAF2F8
+  BorderColor #2874A6
+}
+skinparam actorStyle awesome
+
+actor Student
+actor Admin
+actor "Codeforces API" as CF
+actor "AI Service" as AI
+actor "Notification Service" as NS
+
+rectangle "ICPC Training Companion" {
+
+  package "Authentication" {
+    usecase "Register Account" as UC1
+    usecase "Login" as UC2
+  }
+
+  package "Codeforces Integration" {
+    usecase "Connect Codeforces Account" as UC3
+    usecase "Validate Handle" as UC4
+    usecase "View Dashboard" as UC5
+    usecase "Sync Submissions" as UC6
+    usecase "View Upcoming Contests" as UC11
+  }
+
+  package "AI Training Assistant" {
+    usecase "Analyze Performance" as UC7
+    usecase "Identify Weak Topics" as UC8
+    usecase "Get Upsolving Recommendations" as UC9
+  }
+
+  package "Training Management" {
+    usecase "View Training Roadmap" as UC10
+    usecase "Track Sheet Progress" as UC12
+    usecase "Manage Training Content" as UC13
+  }
+
+  package "Notifications" {
+    usecase "Enable Contest Notifications" as UC14
+    usecase "Receive Contest Reminders" as UC15
+  }
+}
+
+Student --> UC1
+Student --> UC2
+Student --> UC3
+Student --> UC5
+Student --> UC7
+Student --> UC8
+Student --> UC9
+Student --> UC10
+Student --> UC11
+Student --> UC12
+Student --> UC14
+Student --> UC15
+
+Admin --> UC13
+
+UC3 ..> UC4 : <<include>>
+UC3 ..> UC6 : <<include>>
+UC5 ..> UC6 : <<include>>
+UC7 ..> UC6 : <<include>>
+UC8 ..> UC7 : <<include>>
+UC9 ..> UC7 : <<include>>
+UC12 ..> UC6 : <<include>>
+UC15 ..> UC14 : <<extend>>
+
+CF --> UC4
+CF --> UC6
+CF --> UC11
+
+AI --> UC7
+AI --> UC8
+AI --> UC9
+
+NS --> UC15
+
+note bottom of UC13
+Admin manages published training
+weeks, topics, videos and sheets.
+end note
+
+@enduml
