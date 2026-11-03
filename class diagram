@@ -1,0 +1,190 @@
+@startuml
+title ICPC Training Companion - Class Diagram
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam backgroundColor white
+skinparam class {
+  BackgroundColor #EAF2F8
+  BorderColor #2874A6
+  ArrowColor #34495E
+}
+
+package "User Management" {
+
+  class Student {
+    -id: String
+    -name: String
+    -email: String
+    -codeforcesHandle: String
+    +register()
+    +login()
+    +connectCodeforces(handle: String)
+    +viewDashboard()
+  }
+
+  class AuthService {
+    +register(email: String, password: String)
+    +login(email: String, password: String)
+    +logout()
+  }
+}
+
+package "Codeforces Integration" {
+
+  class CodeforcesProfile {
+    -handle: String
+    -rating: int
+    -maxRating: int
+    -rank: String
+    +validateHandle()
+    +getProfile()
+    +getRating()
+  }
+
+  class Submission {
+    -submissionId: String
+    -problemId: String
+    -verdict: String
+    -submittedAt: DateTime
+    +isAccepted(): Boolean
+  }
+
+  class Contest {
+    -contestId: int
+    -name: String
+    -startTime: DateTime
+    -duration: int
+    +getUpcomingContests()
+  }
+
+  class CodeforcesService {
+    +validateHandle(handle: String): Boolean
+    +fetchProfile(handle: String)
+    +fetchSubmissions(handle: String)
+    +fetchContests()
+  }
+}
+
+package "AI Performance Analysis" {
+
+  class PerformanceAnalysis {
+    -analysisId: String
+    -rating: int
+    -solvedProblems: int
+    -contestCount: int
+    -summary: String
+    +calculateMetrics()
+    +generateAnalysis()
+  }
+
+  class WeakTopic {
+    -topicId: String
+    -name: String
+    -weaknessScore: float
+    -explanation: String
+    +identifyWeakness()
+  }
+
+  class Recommendation {
+    -recommendationId: String
+    -problemId: String
+    -difficulty: String
+    -reason: String
+    +generateRecommendations()
+    +excludeSolvedProblems()
+  }
+
+  class AIAnalysisService {
+    +analyzePerformance()
+    +identifyWeakTopics()
+    +recommendProblems()
+  }
+}
+
+package "Training Management" {
+
+  class RoadmapWeek {
+    -weekId: int
+    -title: String
+    -topic: String
+    -videoUrl: String
+    +getTrainingMaterials()
+  }
+
+  class TrainingSheet {
+    -sheetId: String
+    -title: String
+    -totalProblems: int
+    +getProblems()
+    +calculateProgress()
+  }
+
+  class TrainingProblem {
+    -problemId: String
+    -name: String
+    -url: String
+    -difficulty: String
+    +checkCompletion()
+  }
+
+  class ProgressTracker {
+    -completedProblems: int
+    -totalProblems: int
+    -progressPercentage: float
+    +syncProgress()
+    +updateProgress()
+  }
+}
+
+package "Notifications" {
+
+  class ContestNotification {
+    -notificationId: String
+    -contestName: String
+    -scheduledTime: DateTime
+    -enabled: Boolean
+    +scheduleReminder()
+    +sendReminder()
+  }
+
+  class NotificationService {
+    +requestPermission()
+    +scheduleNotification()
+    +sendNotification()
+  }
+}
+
+' User relationships
+Student "1" --> "1" AuthService : authenticates through
+Student "1" *-- "0..1" CodeforcesProfile : connects
+Student "1" --> "0..*" PerformanceAnalysis : requests
+Student "1" --> "0..*" ProgressTracker : tracks
+
+' Codeforces relationships
+CodeforcesProfile "1" o-- "0..*" Submission : has
+CodeforcesService ..> CodeforcesProfile : retrieves
+CodeforcesService ..> Submission : fetches
+CodeforcesService ..> Contest : fetches
+
+' AI relationships
+PerformanceAnalysis "1" *-- "0..*" WeakTopic : identifies
+PerformanceAnalysis "1" *-- "0..*" Recommendation : generates
+AIAnalysisService ..> PerformanceAnalysis : analyzes
+AIAnalysisService ..> WeakTopic : identifies
+AIAnalysisService ..> Recommendation : creates
+AIAnalysisService ..> CodeforcesService : gets statistics
+
+' Training relationships
+RoadmapWeek "1" *-- "0..*" TrainingSheet : contains
+TrainingSheet "1" *-- "1..*" TrainingProblem : contains
+ProgressTracker ..> TrainingSheet : tracks
+ProgressTracker ..> TrainingProblem : updates
+ProgressTracker ..> CodeforcesService : syncs submissions
+
+' Notification relationships
+Student "1" o-- "0..*" ContestNotification : configures
+ContestNotification ..> Contest : reminds about
+NotificationService ..> ContestNotification : schedules
+
+@enduml
